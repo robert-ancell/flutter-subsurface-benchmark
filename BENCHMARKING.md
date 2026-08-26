@@ -105,36 +105,6 @@ Each run writes, into the output directory:
 `thread_cpu.sh` writes `<renderer>_<rep>.threads`, one `name ticks` line per
 thread.
 
-## Gotchas
-
-These cost real time to discover.
-
-- **`FLUTTER_LINUX_RENDERER` is a pre-existing engine variable** (software vs
-  OpenGL) and is *not* the one you want. The patch deliberately uses
-  `FLUTTER_LINUX_VIEW_RENDERER`. Setting the wrong one is silently ignored and
-  quietly invalidates every run.
-- **Verify the renderer per run.** Each run prints
-  `FLUTTER_VIEW_RENDERER=<name>` to stderr. Check it. A silent fallback to the
-  other renderer produces plausible-looking but worthless data:
-  ```sh
-  for f in results/*.err; do
-    b=$(basename "$f" .err)
-    echo "$b -> $(grep -o 'FLUTTER_VIEW_RENDERER=[a-z]*' "$f" | head -1)"
-  done
-  ```
-- **Look at the window.** `FrameTiming` only measures up to raster completion,
-  so it cannot tell you whether frames reached the screen. A renderer that
-  composites correctly but never presents still reports perfect timings.
-- **Screenshotting on Wayland is awkward.** `grim` needs `wlr-screencopy`,
-  which neither Mutter nor Weston provides, and GNOME's D-Bus screenshot
-  returns `AccessDenied`. `weston_shot.sh` works around this using a nested
-  `weston --debug --backend=wayland` plus `weston-screenshooter`; the `--debug`
-  flag is what authorises capture, and the headless backend has no GPU so the
-  nested wayland backend is required.
-- **Don't rebuild the engine mid-run.** It will corrupt the run in progress.
-- **Raster time is not comparable across these two renderers.** See
-  [Interpreting the raster numbers](README.md#interpreting-the-raster-numbers).
-
 ## Test environment
 
 The committed results were measured on:

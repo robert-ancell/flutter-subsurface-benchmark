@@ -105,7 +105,7 @@ can exceed the budget while the frame rate stays pinned at 60fps. That's why
 subsurface shows 83.3% vs 66.2% at medium load while simultaneously delivering
 a *higher* frame rate (59.9 vs 58.0 fps).
 
-
+### Where the CPU time goes
 
 Raster-thread times look *worse* for subsurface (+20–40% at p50). Taken alone
 that reads like a regression. It isn't — it's relocated work.
@@ -145,42 +145,31 @@ subsurface, consistently across all 9 runs.
 `FrameTiming`'s raster metric measures work on the raster thread only. When an
 architecture moves work *between* threads, that metric moves with it and stops
 being comparable across the two designs. Total process CPU and per-thread CPU
-are the honest comparison here, and both say the same thing: same total cost,
-better distribution.
+are the meaningful comparison here, and both show the same thing: near-identical
+total cost, better distribution.
 
-`FrameTiming` also only measures up to raster completion — it cannot tell you
-whether frames actually reached the screen, so a renderer that composites
-correctly but fails to present still reports healthy timings. Check the window
-visually before trusting any renderer benchmark.
 
-## Verdict for the video
+## Conclusions
 
-The subsurface rewrite was done for cleaner architecture, and the data matches
-that intent honestly:
+The subsurface renderer was written for a cleaner architecture rather than for
+speed, and the measurements are consistent with that:
 
-- **Frame rate: unchanged.** Don't sell it as a speed-up.
-- **Smoothness: substantially better under load.** 44-52% less frame-time
-  variance at medium/heavy load, and 93% less raster variance at heavy load.
-  This is the most defensible user-visible win.
-- **Main thread: ~20% less CPU.** Real, measurable, and the thing that matters
-  for input latency and UI responsiveness.
-- **Total CPU: flat**, and lower in light/idle workloads.
-- **The architecture is simpler**: Flutter now owns its own Wayland surface and
-  presents directly, instead of round-tripping every frame through GTK's widget
-  render pass and frame clock.
+- **Frame rate is unchanged.** This is not a throughput optimisation.
+- **Smoothness improves substantially under load**: 44-52% less frame time
+  variance at medium and heavy load, and 93% less raster variance at heavy
+  load. This is the clearest user-visible benefit.
+- **The main thread does ~20% less work**, which matters for input latency and
+  UI responsiveness.
+- **Whole-process CPU is essentially flat** (−3%), and lower under light and
+  idle workloads.
+- **The design is simpler**: Flutter owns its own Wayland surface and presents
+  directly, rather than routing every frame through GTK's widget render pass
+  and frame clock.
 
-The best framing is probably: *this commit didn't make Flutter draw frames
-faster, it made Flutter draw them more evenly -- by no longer making GTK do
-its work for it*.
+In short, the change does not make Flutter draw frames faster; it makes it draw
+them more evenly, by no longer routing presentation through GTK.
 
 ## Reproducing
 
-```
-./run_bench.sh   <app-binary> results 5 _light     # BENCH_SHAPES=200
-./thread_cpu.sh  <app-binary> thread_cpu 3         # per-thread CPU
-python3 analyse.py results                         # throughput + latency
-python3 jitter.py  results                         # smoothness / jitter
-```
-
-Raw data in `results/` (throughput), `startup/` (first frame) and
-`thread_cpu/` (per-thread).
+See [BENCHMARKING.md](BENCHMARKING.md). Raw data is in `results/` (throughput),
+`startup/` (first frame) and `thread_cpu/` (per-thread).
