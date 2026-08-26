@@ -1,0 +1,3 @@
+FLUTTER_VIEW_RENDERER=opengl
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(127)] Using the Impeller rendering backend (OpenGLESSDF).
+Gdk-Message: 11:19:48.709: Unable to load  from the cursor theme

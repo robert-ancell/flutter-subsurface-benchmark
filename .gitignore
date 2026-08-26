@@ -1,0 +1,14 @@
+# Build output and generated artifacts.
+build/
+.dart_tool/
+linux/flutter/ephemeral/
+*.iml
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+
+# Editor/OS noise
+.DS_Store
+*.swp
