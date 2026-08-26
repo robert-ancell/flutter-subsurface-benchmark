@@ -14,6 +14,9 @@ import sys
 import matplotlib
 
 matplotlib.use("Agg")
+# Deterministic element IDs, so regenerating the charts from unchanged data
+# produces byte-identical files rather than a spurious diff.
+matplotlib.rcParams["svg.hashsalt"] = "flutter-subsurface-benchmark"
 import matplotlib.pyplot as plt  # noqa: E402
 
 GL = "#8c8c8c"
@@ -54,7 +57,10 @@ def style(ax):
 def save(fig, name):
     OUT_DIR.mkdir(exist_ok=True)
     path = OUT_DIR / name
-    fig.savefig(path, format="svg", bbox_inches="tight", transparent=False)
+    # Date=None keeps a creation timestamp out of the file, so the output
+    # depends only on the data.
+    fig.savefig(path, format="svg", bbox_inches="tight", transparent=False,
+                metadata={"Date": None})
     plt.close(fig)
     print(f"wrote {path}")
 
