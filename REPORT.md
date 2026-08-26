@@ -8,7 +8,7 @@ Subsurface renderer added in `706edcdc32f` — *Add FlViewRendererSubsurface (#1
 ## Headline
 
 **Frame throughput is unchanged, but frames get markedly more consistent:
-40-90% less jitter under load. ~19% of CPU work also moves off the GTK main
+40-90% less jitter under load. ~20% of CPU work also moves off the GTK main
 thread onto the raster thread, where it belongs.**
 
 ## Method
@@ -115,17 +115,16 @@ thread later blits that FBO to the screen in its own render pass. In the
 subsurface path the raster thread does composite + blit + `eglSwapBuffers` +
 `wl_surface.commit` itself, and the main thread does nothing.
 
-Per-thread CPU, medium load, mean of 3 runs:
+Per-thread CPU, medium load, median of 3 runs:
 
 | Thread | GTK OpenGL | Subsurface | Change |
 |---|---|---|---|
-| **Main / platform** | 8.89s | 7.18s | **−19.2%** |
-| Raster | 6.37s | 7.60s | +19.3% |
-| GL driver / other | 1.31s | 1.64s | +25% |
-| **Total process** | **16.57s** | **16.42s** | **−0.9%** |
+| **Main / platform** | 8.98s | 7.17s | **−20.2%** |
+| Raster | 6.48s | 7.43s | +14.7% |
+| **Whole process** | **19.65s** | **19.04s** | **−3.1%** |
 
-Total CPU is flat. The main thread — the thread that handles input, window
-management and is on the latency-critical path — is **19% freer**.
+Whole-process CPU barely moves. The main thread — which handles input and
+window management, and sits on the latency-critical path — is **20% freer**.
 
 This is confirmed independently by the light-load and startup numbers, where
 subsurface uses measurably *less* total CPU (−14.2% and −10.9%) while producing
@@ -163,7 +162,7 @@ that intent honestly:
 - **Smoothness: substantially better under load.** 44-52% less frame-time
   variance at medium/heavy load, and 93% less raster variance at heavy load.
   This is the most defensible user-visible win.
-- **Main thread: ~19% less CPU.** Real, measurable, and the thing that matters
+- **Main thread: ~20% less CPU.** Real, measurable, and the thing that matters
   for input latency and UI responsiveness.
 - **Total CPU: flat**, and lower in light/idle workloads.
 - **The architecture is simpler**: Flutter now owns its own Wayland surface and
