@@ -25,6 +25,8 @@ the comparison is apples-to-apples (that override has since been reverted).
   cancel thermal drift
 - Every run's actual renderer selection was verified from its log; 0 mismatches
 
+![The benchmark app at medium load](shots/benchmark_app.png)
+
 Three load levels:
 
 | Level | Shapes | Regime |

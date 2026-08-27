@@ -7,6 +7,14 @@ perform better than the **GTK OpenGL** renderer it replaces?
 **Short answer: the frame rate is the same, but frames arrive far more evenly,
 and the GTK main thread does about 20% less work.**
 
+## The workload
+
+A Flutter app animating thousands of translucent shapes, sized to push the
+raster thread. The window title records the renderer and load level so a
+running window is self-identifying.
+
+![The benchmark app](shots/benchmark_app.png)
+
 ## Frames arrive evenly instead of in lurches
 
 Raster time for 120 consecutive frames under heavy load. Both renderers average

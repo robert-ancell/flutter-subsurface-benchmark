@@ -14,7 +14,12 @@ shift 2
 SOCKET="weston-shot-$$"
 WESTON_LOG="/tmp/$SOCKET.log"
 
-weston --debug --backend=wayland --width=1280 --height=800 \
+# The nested output must be taller than the app window plus its title bar, or
+# the capture clips the bottom of the window.
+WIDTH="${SHOT_WIDTH:-1280}"
+HEIGHT="${SHOT_HEIGHT:-800}"
+
+weston --debug --backend=wayland --width="$WIDTH" --height="$HEIGHT" \
   --socket="$SOCKET" --idle-time=0 >"$WESTON_LOG" 2>&1 &
 weston_pid=$!
 
