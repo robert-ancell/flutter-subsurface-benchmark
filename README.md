@@ -10,8 +10,7 @@ and the GTK main thread does about 20% less work.**
 ## The workload
 
 A Flutter app animating thousands of translucent shapes, sized to push the
-raster thread. The window title records the renderer and load level so a
-running window is self-identifying.
+raster thread.
 
 ![The benchmark app](shots/benchmark_app.png)
 

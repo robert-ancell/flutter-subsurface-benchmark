@@ -91,7 +91,7 @@ limit, and heavy is clearly below it.
 | `BENCH_SHAPES` | 3000 | Animated shapes per frame; the load knob. |
 | `BENCH_FRAMES` | 600 | Frames measured after warmup. |
 | `BENCH_WARMUP` | 180 | Warmup frames, discarded. |
-| `BENCH_LABEL` | — | Label recorded in the JSON and window title. |
+| `BENCH_LABEL` | — | Label recorded in the JSON. |
 | `FLUTTER_LINUX_VIEW_RENDERER` | auto | `opengl` or `subsurface` (needs the patch). |
 
 ## Output format
